@@ -13,9 +13,11 @@
 export class WebmentionValidator {
   #domParser = new DOMParser();
   #htmlRegex = new RegExp(/\.html?$/i);
-  #relRegex = new RegExp(/rel=.*webmention.*/);
+  #relRegex = new RegExp(/rel=.*webmention.*/i);
   #endpointRegex = new RegExp(/<.*>/);
   #absoluteRegex = new RegExp(/:\/\//);
+  #contentHTML = new RegExp(/text\/html/i);
+  #contentXHTML = new RegExp(/application\/xhtml\+xml/i);
 
   /********** Public Methods **********/
 
@@ -140,7 +142,7 @@ export class WebmentionValidator {
           console.debug("WebmentionValidator.getTargetEndpoint: Checking HTTP Request for Link headers.");
           let linkHeadersString = response.headers.get("link");
           if (linkHeadersString !== null) {
-            let linkHeaders = linkHeadersString.split(",");
+            let linkHeaders = linkHeadersString.split(", ");
             linkHeaders.forEach(element => {
               if (this.#relRegex.test(element)) {
                 let url = element.match(this.#endpointRegex);
@@ -151,9 +153,10 @@ export class WebmentionValidator {
           }
           // Then check the HTML
           if (!output) {
-            let targetFile = await response.text();
-            if (this.#htmlRegex.test(target)) {
-              console.debug("WebmentionValidator.checkTarget: Is HTML; checking for @rel=webmention.");
+            let contentType = response.headers.get("content-type");
+            if (this.#contentHTML.test(contentType) || this.#contentXHTML.test(contentType)) {
+              console.debug("WebmentionValidator.checkTarget: Is (X)HTML; checking for @rel=webmention.");
+              let targetFile = await response.text();
               let endpointURL = this.#getEndpointInTargetHTML(targetFile);
               if (endpointURL !== null) {
                 console.debug("WebmentionValidator.checkTarget: @webmention found in HTML element with @rel=webmention.");
@@ -187,7 +190,7 @@ export class WebmentionValidator {
   #getEndpointInTargetHTML(targetFile) {
     let output = null;
     let targetDom = this.#domParser.parseFromString(targetFile, "text/html");
-    let webmention = targetDom.querySelector("*[rel='webmention']");
+    let webmention = targetDom.querySelector("*[rel~='webmention']");
     if (webmention !== null) { output = webmention.getAttribute("href"); }
     return output;
   }
