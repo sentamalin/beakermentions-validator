@@ -102,6 +102,7 @@ export class WebmentionValidator {
     let targetHost = `${targetSplit[0]}//${targetSplit[2]}/`;
     for (let i = 0; i < 3; i++) { targetSplit.shift(); }
     let targetPath = `/${targetSplit.join("/")}`;
+    let targetRedirect = null;
 
     // First, try to find @webmention in Beaker
     try {
@@ -138,6 +139,8 @@ export class WebmentionValidator {
         console.debug("WebmentionValidator.getTargetEndpoint: Using Hyperdrive API failed; using Fetch API.");
         let response = await fetch(target);
         if (response.ok) {
+          // Before anything, check to see if the URL has been redirected
+          if (response.redirected) { targetRedirect = response.url; }
           // First, check the HTTP Link Headers
           console.debug("WebmentionValidator.getTargetEndpoint: Checking HTTP Request for Link headers.");
           let linkHeadersString = response.headers.get("link");
@@ -170,7 +173,10 @@ export class WebmentionValidator {
       }
     }
 
-    if (output) { return this.#getAbsoluteURL(target, output); }
+    if (output) {
+      if (targetRedirect) { return this.#getAbsoluteURL(targetRedirect, output); }
+      else { return this.#getAbsoluteURL(target, output); }
+    }
     else { return output; }
   }
 
