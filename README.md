@@ -7,6 +7,8 @@ This provides a `WebmentionValidator` object that can be used by other applicati
 * `checkSource(source, target)` - Check a `source` URL for references to a `target` URL. Returns a `boolean`.
 * `getTargetEndpoint(target)` - Checks a `target` URL for a webmention endpoint. Returns a `string` URL of the Webmention endpoint, or `null` if not found.
 
+A [test page][13] is available.
+
 ## License
 
 Written in 2020 by [Don Geronimo][7]. To the extent possible under law, Don Geronimo has waived all copyright and related or neighboring rights to Beakermentions Validator by publishing it under the [CC0 1.0 Universal Public Domain Dedication][8]. This work is published from the United States.
@@ -27,3 +29,4 @@ Made with ❤️ and JavaScript. Please freely share and remix.
 [10]: hyper://18757df1063e9c2cbc539910b6e92f973c51cd54fd4532a72bd583749d22c4a0/thumb.svg
 [11]: https://openmoji.org/
 [12]: https://creativecommons.org/licenses/by-sa/4.0/#
+[13]: hyper://18757df1063e9c2cbc539910b6e92f973c51cd54fd4532a72bd583749d22c4a0/test/

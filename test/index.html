@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      prefix="cc: https://creativecommons.org/ns#"
+      lang="en" xml:lang="en" typeof="cc:Work">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/index.css" />
+    <link rel="icon" type="image/svg+xml" href="/thumb.svg" />
+  </head>
+  <body>
+    <main>
+      <h1>Beakermentions</h1>
+      <div id="testForms">
+        <h2 style="font-family:monospace;">checkSource(source, target)</h2>
+        <p style="margin-bottom:0;">
+          <label for="checkSource-source">Source</label>
+          <input id="checkSource-source" type="url" placeholder="Source URL" />
+        </p>
+        <p style="margin:0.5rem 0;">
+          <label for="checkSource-target">Target</label>
+          <input id="checkSource-target" type="url" placeholder="Target URL" />
+        </p>
+        <p style="margin-top:0;text-align:right;"><button id="checkSource-submit">Check Source</button></p>
+        <h2 style="font-family:monospace;">getTargetEndpoint(target)</h2>
+        <p style="margin-bottom:0;">
+          <label for="getTargetEndpoint-target">Target</label>
+          <input id="getTargetEndpoint-target" type="url" placeholder="Target URL" />
+        </p>
+        <p style="margin-top:0.5rem;text-align:right;"><button id="getTargetEndpoint-submit">Get Endpoint</button></p>
+      </div>
+      <div id="output"></div>
+      <h2>License</h2>
+      <p>Written in 2020 by <a property="cc:attributionURL" href="hyper://9fa076bdc2a83f6d0d32ec010a71113b0d25eccf300a5eaedf72cf3326546c9a/">Don Geronimo</a>. To the extent possible under law, <span property="cc:attributionName">Don Geronimo</span> has waived all copyright and related or neighboring rights to Beakermentions Validator by publishing it under the <a property="cc:license" href="hyper://18757df1063e9c2cbc539910b6e92f973c51cd54fd4532a72bd583749d22c4a0/LICENSE">CC0 1.0 Universal Public Domain Dedication</a>. This work is published from the United States.</p>
+      <p><a href="hyper://18757df1063e9c2cbc539910b6e92f973c51cd54fd4532a72bd583749d22c4a0/thumb.svg">Satellite Antenna Emoji</a> designed by <a href="https://openmoji.org/">OpenMoji</a> – the open-source emoji and icon project. License: <a href="https://creativecommons.org/licenses/by-sa/4.0/#">CC BY-SA 4.0</a>. Changes: Removed empty padding and added license information in the file's metadata.</p>
+      <p style="font-size:x-small;color:#999;">Made with ❤️ and JavaScript. Please freely share and remix.</p>
+    </main>
+    <template id="response-template">
+      <div class="response">
+        <p class="title"></p>
+        <pre class="output"></pre>
+        <p class="message"></p>
+      </div>
+    </template>
+  </body>
+  <style>
+body * {
+  box-sizing: border-box;
+}
+
+#testForms label {
+  display: none;
+}
+
+#testForms input {
+  width: 100%;
+  border: 1px solid #999;
+  border-radius: 2rem;
+  padding: 0.25rem 0.75rem;
+}
+
+#testForms button {
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  background-color: #66f;
+  background-image: linear-gradient(to bottom, #99f, #66f);
+  border: 1px solid #33f;
+  color: #fff;
+}
+
+#output .response {
+  background-color: #efefef;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: smaller;
+}
+
+#output .response:last-child {
+  margin-bottom: 0;
+}
+
+#output .response .title {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-size: 1.25em;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+#output .response .output {
+  overflow: auto;
+}
+
+#output .response .message {
+  margin: 0;
+}
+  </style>
+  <script type="module">
+import { WebmentionValidator } from "../index.js";
+let validator = new WebmentionValidator();
+
+async function checkSource() {
+  let source = document.getElementById("checkSource-source").value;
+  let target = document.getElementById("checkSource-target").value;
+  let output = await validator.checkSource(source, target);
+  if (output) { addResponse("checkSource(source, target)",
+    `source: ${source}\ntarget: ${target}\noutput: ${output}`,
+    "Source URL references the target URL."); }
+  else { addResponse("checkSource(source, target)",
+    `source: ${source}\ntarget: ${target}\noutput: ${output}`,
+    "Source URL does not reference the target URL."); }
+}
+
+async function getTargetEndpoint() {
+  let target = document.getElementById("getTargetEndpoint-target").value;
+  let output = await validator.getTargetEndpoint(target);
+  if (output) { addResponse("getTargetEndpoint(target)",
+    `target: ${target}\noutput: ${output}`,
+    "Found a Webmention Endpoint."); }
+  else { addResponse("getTargetEndpoint(target)",
+    `target: ${target}\noutput: ${output}`,
+    "Could not find a Webmention Endpoint."); }
+}
+
+function addResponse(fromFunction, output, message) {
+  let container = document.getElementById("output");
+  let template = document.getElementById("response-template");
+  let clone = template.content.cloneNode(true);
+  clone.querySelector(".title").textContent = fromFunction;
+  clone.querySelector(".output").textContent = output;
+  clone.querySelector(".message").textContent = message;
+  container.prepend(clone);
+}
+
+async function main() {
+  let info = await beaker.hyperdrive.getInfo();
+  document.title = `Test - ${info.title}`;
+  document.getElementById("checkSource-submit").addEventListener("click", checkSource);
+  document.getElementById("getTargetEndpoint-submit").addEventListener("click", getTargetEndpoint);
+}
+
+main();
+  </script>
+</html>
