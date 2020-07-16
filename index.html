@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      lang="en" xml:lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="index.css" />
+    <link rel="icon" type="image/svg+xml" href="/thumb.svg" />
+  </head>
+  <body>
+    <main>
+      <h1>Beakermentions</h1>
+      <section id="readme"></section>
+    </main>
+  </body>
+  <script>
+// Read the contents of README.md
+async function loadREADME() {
+  let readme = await beaker.hyperdrive.readFile("/README.md", "utf8");
+  document.getElementById("readme").innerHTML = beaker.markdown.toHTML(readme);
+}
+
+loadREADME();
+  </script>
+</html>

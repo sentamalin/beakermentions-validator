@@ -1,0 +1,51 @@
+/* Beakermentions Validator (index.css) - A target and source validator of                *
+ * the W3C Webmention recommendation for Beaker Browser users.                            *
+ *                                                                                        *
+ * Written in 2020 by Don Geronimo <email@sentamal.in>                                    *
+ *                                                                                        *
+ * To the extent possible under law, the author(s) have dedicated all copyright           *
+ * and related and neighboring rights to this software to the public domain               *
+ * worldwide. This software is distributed without any warranty.                          *
+ *                                                                                        *
+ * You should have received a copy of the CC0 Public Domain Dedication along              *
+ * with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.   */
+
+body {
+  font-family: sans-serif;
+  background-color: #fafafa;
+}
+
+main {
+  max-width: 40rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+main > h1 {
+  font-size: 2rem;
+  font-weight: normal;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+}
+
+main > h1::before {
+  background-image: url('thumb.svg');
+  background-size: 1.25rem 1.25rem;
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.75rem;
+  content: "";
+}
+
+a, abbr {
+  text-decoration: none;
+}
+
+#readme > p:last-child {
+  font-size: x-small;
+  color: #999;
+}
