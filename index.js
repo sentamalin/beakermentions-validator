@@ -124,7 +124,7 @@ export class WebmentionValidator {
           if (this.#htmlRegex.test(target)) {
             console.debug("WebmentionValidator.getTargetEndpoint: Is HTML; checking for @rel=webmention.");
             let endpointURL = this.#getEndpointInTargetHTML(targetFile);
-            if (endpointURL !== null) {
+            if (endpointURL || (endpointURL === "")) {
               console.debug("WebmentionValidator.getTargetEndpoint: @webmention found in HTML element with @rel=webmention.");
               output = endpointURL;
             }
@@ -161,7 +161,7 @@ export class WebmentionValidator {
               console.debug("WebmentionValidator.checkTarget: Is (X)HTML; checking for @rel=webmention.");
               let targetFile = await response.text();
               let endpointURL = this.#getEndpointInTargetHTML(targetFile);
-              if (endpointURL !== null) {
+              if (endpointURL || (endpointURL === "")) {
                 console.debug("WebmentionValidator.checkTarget: @webmention found in HTML element with @rel=webmention.");
                 output = endpointURL;
               }
@@ -173,11 +173,11 @@ export class WebmentionValidator {
       }
     }
 
-    if (output) {
-      if (targetRedirect) { return this.#getAbsoluteURL(targetRedirect, output); }
-      else { return this.#getAbsoluteURL(target, output); }
+    if (output || (output === "")) {
+      if (targetRedirect) { output = this.#getAbsoluteURL(targetRedirect, output); }
+      else { output = this.#getAbsoluteURL(target, output); }
     }
-    else { return output; }
+    return output;
   }
 
   /********** Private Methods **********/
@@ -196,15 +196,27 @@ export class WebmentionValidator {
   #getEndpointInTargetHTML(targetFile) {
     let output = null;
     let targetDom = this.#domParser.parseFromString(targetFile, "text/html");
-    let webmention = targetDom.querySelector("*[rel~='webmention']");
-    if (webmention !== null) { output = webmention.getAttribute("href"); }
+    let webmention = targetDom.querySelectorAll("*[rel~='webmention']");
+    webmention.forEach(element => {
+      if ((!output) && (output !== "")) {
+        if (element.hasAttribute("href")) {
+          if (element.getAttribute("href") === null) {
+            output = "";
+          } else {
+            output = element.getAttribute("href");
+          }
+        }
+      }
+    });
+    console.log("WebmentionEndpoint.#getEndpointInTargetHTML: output -", output);
     return output;
   }
 
   #getAbsoluteURL(baseURL, relURL) {
     let output;
     let baseSplit = baseURL.split("/");
-    if (this.#absoluteRegex.test(relURL)) { output = relURL; }
+    if (relURL === "") { output = baseURL; }
+    else if (this.#absoluteRegex.test(relURL)) { output = relURL; }
     else if (relURL.charAt(0) === "/") {
       output = `${baseSplit[0]}//${baseSplit[2]}${relURL}`;
     } else {
