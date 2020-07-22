@@ -33,6 +33,27 @@ export class WebmentionValidator {
     try {
       let sourceHyperdrive = beaker.hyperdrive.drive(sourceHost);
       let sourceStat = await sourceHyperdrive.stat(sourcePath);
+      // Check the path. If it's a file, continue. If it's a directory, look for 'index.html,' then 'index.md.'
+      if (!sourceStat.isFile()) {
+        let newPath = `${sourcePath}index.html`;
+        try {
+          let newStat = await sourceHyperdrive.stat(newPath);
+          if (newStat.isFile()) { 
+            sourcePath = newPath;
+            sourceStat = newStat;
+          }
+        } catch {}
+      }
+      if (!sourceStat.isFile()) {
+        let newPath = `${sourcePath}index.md`;
+        try {
+          let newStat = await sourceHyperdrive.stat(newPath);
+          if (newStat.isFile()) {
+            sourcePath = newPath;
+            sourceStat = newStat;
+          }
+        } catch {}
+      }
       if (sourceStat.isFile()) {
         // Check if the source references the target in metadata
         console.debug("WebmentionValidator.checkSource: Checking metadata for 'target.'");
@@ -108,6 +129,27 @@ export class WebmentionValidator {
     try {
       let targetHyperdrive = beaker.hyperdrive.drive(targetHost);
       let targetStat = await targetHyperdrive.stat(targetPath);
+      // Check the path. If it's a file, continue. If it's a directory, look for 'index.html,' then 'index.md.'
+      if (!targetStat.isFile()) {
+        let newPath = `${targetPath}index.html`;
+        try {
+          let newStat = await targetHyperdrive.stat(newPath);
+          if (newStat.isFile()) { 
+            targetPath = newPath;
+            targetStat = newStat;
+          }
+        } catch {}
+      }
+      if (!targetStat.isFile()) {
+        let newPath = `${targetPath}index.md`;
+        try {
+          let newStat = await targetHyperdrive.stat(newPath);
+          if (newStat.isFile()) {
+            targetPath = newPath;
+            targetStat = newStat;
+          }
+        } catch {}
+      }
       if (targetStat.isFile()) {
         // Check if the metadata mentions this endpoint as @webmention
         if (targetStat.metadata) {
