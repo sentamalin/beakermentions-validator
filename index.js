@@ -66,7 +66,7 @@ export class WebmentionValidator {
         // Check if the source references the target in its HTML
         if (!output) {
           let sourceFile = await sourceHyperdrive.readFile(sourcePath, "utf8");
-          if (this.#htmlRegex.test(source)) {
+          if (this.#htmlRegex.test(sourcePath)) {
             console.debug("WebmentionValidator.checkSource: Is HTML; checking @href/@src for 'target.'");
             if (this.#checkTargetInSourceHTML(sourceFile, target)) {
               console.debug("WebmentionValidator.checkSource: 'target' found in HTML.");
@@ -93,7 +93,8 @@ export class WebmentionValidator {
         if (response.ok) {
           // Check if the source references the target in its HTML
           let sourceFile = await response.text();
-          if (this.#htmlRegex.test(source)) {
+          let contentType = response.headers.get("content-type");
+          if (this.#contentHTML.test(contentType) || this.#contentXHTML.test(contentType)) {
             console.debug("WebmentionValidator.checkSource: Is HTML; checking @href/@src for 'target.'");
             if (this.#checkTargetInSourceHTML(sourceFile, target)) {
               console.debug("WebmentionValidator.checkSource: 'target' found in HTML.");
@@ -163,7 +164,7 @@ export class WebmentionValidator {
         // Check if any <a> or <link> tags mention the endpoint with @rel="webmention"
         if (!output) {
           let targetFile = await targetHyperdrive.readFile(targetPath, "utf8");
-          if (this.#htmlRegex.test(target)) {
+          if (this.#htmlRegex.test(targetPath)) {
             console.debug("WebmentionValidator.getTargetEndpoint: Is HTML; checking for @rel=webmention.");
             let endpointURL = this.#getEndpointInTargetHTML(targetFile);
             if (endpointURL || (endpointURL === "")) {
