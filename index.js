@@ -201,11 +201,11 @@ export class WebmentionValidator {
           if (!output) {
             let contentType = response.headers.get("content-type");
             if (this.#contentHTML.test(contentType) || this.#contentXHTML.test(contentType)) {
-              console.debug("WebmentionValidator.checkTarget: Is (X)HTML; checking for @rel=webmention.");
+              console.debug("WebmentionValidator.getTargetEndpoint: Is (X)HTML; checking for @rel=webmention.");
               let targetFile = await response.text();
               let endpointURL = this.#getEndpointInTargetHTML(targetFile);
               if (endpointURL || (endpointURL === "")) {
-                console.debug("WebmentionValidator.checkTarget: @webmention found in HTML element with @rel=webmention.");
+                console.debug("WebmentionValidator.getTargetEndpoint: @webmention found in HTML element with @rel=webmention.");
                 output = endpointURL;
               }
             }
