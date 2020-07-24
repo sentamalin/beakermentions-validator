@@ -15,7 +15,6 @@ export class WebmentionValidator {
   #htmlRegex = new RegExp(/\.html?$/i);
   #relRegex = new RegExp(/rel=.*webmention.*/i);
   #endpointRegex = new RegExp(/<.*>/);
-  #absoluteRegex = new RegExp(/:\/\//);
   #contentHTML = new RegExp(/text\/html/i);
   #contentXHTML = new RegExp(/application\/xhtml\+xml/i);
 
@@ -212,15 +211,16 @@ export class WebmentionValidator {
           }
         }
       } catch (error) {
-        console.error("WebmentionValidator: .checkTarget:", error);
+        console.error("WebmentionValidator.getTargetEndpoint:", error);
       }
     }
 
     if (output || (output === "")) {
-      if (targetRedirect) { output = this.#getAbsoluteURL(targetRedirect, output); }
-      else { output = this.#getAbsoluteURL(target, output); }
+      if (targetRedirect) { output = new URL(output, targetRedirect); }
+      else { output = new URL(output, target); }
     }
-    return output;
+    if (output) { return output.toString(); }
+    else { return output; }
   }
 
   /********** Private Methods **********/
@@ -252,26 +252,6 @@ export class WebmentionValidator {
       }
     });
     console.log("WebmentionEndpoint.#getEndpointInTargetHTML: output -", output);
-    return output;
-  }
-
-  #getAbsoluteURL(baseURL, relURL) {
-    let output;
-    let baseSplit = baseURL.split("/");
-    if (relURL === "") { output = baseURL; }
-    else if (this.#absoluteRegex.test(relURL)) { output = relURL; }
-    else if (relURL.charAt(0) === "/") {
-      output = `${baseSplit[0]}//${baseSplit[2]}${relURL}`;
-    } else {
-      let array = relURL.split("/");
-      baseSplit.pop();
-      for (let i = 0; i < array.length; i++) {
-        if (array[i] === ".") continue;
-        if (array[i] === "..") baseSplit.pop();
-        else baseSplit.push(array[i]);
-      }
-      output = baseSplit.join("/");
-    }
     return output;
   }
 }
