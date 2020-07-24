@@ -18,6 +18,8 @@ export class WebmentionValidator {
   #contentHTML = new RegExp(/text\/html/i);
   #contentXHTML = new RegExp(/application\/xhtml\+xml/i);
 
+  get domParser() { return this.#domParser; }
+
   /********** Public Methods **********/
 
   async checkSource(source, target) {
