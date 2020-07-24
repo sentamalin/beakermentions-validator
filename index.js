@@ -11,14 +11,19 @@
 // with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
 export class WebmentionValidator {
-  #domParser = new DOMParser();
+  #domParser;
   #htmlRegex = new RegExp(/\.html?$/i);
   #relRegex = new RegExp(/rel=.*webmention.*/i);
   #endpointRegex = new RegExp(/<.*>/);
   #contentHTML = new RegExp(/text\/html/i);
   #contentXHTML = new RegExp(/application\/xhtml\+xml/i);
 
-  get domParser() { return this.#domParser; }
+  /********** Constructor/Init **********/
+
+  constructor(options = {}) {
+    if (options.domParser) { this.#domParser = options.domParser; }
+    else { this.#domParser = new DOMParser(); }
+  }
 
   /********** Public Methods **********/
 
