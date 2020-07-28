@@ -7,7 +7,7 @@ This module provides a `WebmentionValidator` object that can be used by other ap
 * `checkSource(source, target)` - Check a `source` URL for references to a `target` URL. Returns a `boolean`.
 * `getTargetEndpoint(target)` - Checks a `target` URL for a webmention endpoint. Returns a `string` URL of the Webmention endpoint, or `null` if not found.
 
-A [test page][5] is available.
+A [test page][5] is available. For more information on Beakermentions, visit [Beakermentions: Webmentions for Beaker Browser][11]
 
 ## License
 
@@ -27,3 +27,4 @@ Made with ❤️ and JavaScript. Please freely share and remix.
 [8]: hyper://18757df1063e9c2cbc539910b6e92f973c51cd54fd4532a72bd583749d22c4a0/thumb.svg
 [9]: https://openmoji.org/
 [10]: https://creativecommons.org/licenses/by-sa/4.0/#
+[11]: hyper://977da6c3040f711508fe246a22b1a1ddd5b716b16dc9ad2a744383d91d52b63a/
