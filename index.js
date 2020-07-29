@@ -196,11 +196,13 @@ export class WebmentionValidator {
           if (linkHeadersString !== null) {
             const linkHeaders = linkHeadersString.split(", ");
             linkHeaders.forEach(element => {
-              if (this.#relRegex.test(element)) {
-                const url = element.match(this.#endpointRegex);
-                console.debug("WebmentionValidator.getTargetEndpoint: 'webmention' found in HTTP Link Headers.");
-                output = url.slice(1, url.length - 1);
-                console.debug("WebmentionValidator.getTargetEndpoint: output -", output);
+              if (!output) {
+                if (this.#relRegex.test(element)) {
+                  const url = element.match(this.#endpointRegex);
+                  console.debug("WebmentionValidator.getTargetEndpoint: 'webmention' found in HTTP Link Headers.");
+                  output = url.slice(1, url.length - 1);
+                  console.debug("WebmentionValidator.getTargetEndpoint: output -", output);
+                }
               }
             });
           }
