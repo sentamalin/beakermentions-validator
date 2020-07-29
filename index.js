@@ -186,30 +186,39 @@ export class WebmentionValidator {
     catch {
       try {
         console.debug("WebmentionValidator.getTargetEndpoint: Using Hyperdrive API failed; using Fetch API.");
-        let response = await fetch(target);
-        if (response.ok) {
-          // Before anything, check to see if the URL has been redirected
-          if (response.redirected) { targetRedirect = response.url; }
-          // First, check the HTTP Link Headers
-          console.debug("WebmentionValidator.getTargetEndpoint: Checking HTTP Request for Link headers.");
-          let linkHeadersString = response.headers.get("link");
+
+        // First, check HEAD for an HTTP Link Header
+        const headers = await fetch(target, {
+          method: "HEAD"
+        });
+        if (headers.ok) {
+          const linkHeadersString = headers.headers.get("link");
           if (linkHeadersString !== null) {
-            let linkHeaders = linkHeadersString.split(", ");
+            const linkHeaders = linkHeadersString.split(", ");
             linkHeaders.forEach(element => {
               if (this.#relRegex.test(element)) {
-                let url = element.match(this.#endpointRegex);
-                console.debug("WebmentionValidator.getTargetEndpoint: @webmention found in HTTP Headers.");
+                const url = element.match(this.#endpointRegex);
+                console.debug("WebmentionValidator.getTargetEndpoint: 'webmention' found in HTTP Link Headers.");
                 output = url.slice(1, url.length - 1);
+                console.debug("WebmentionValidator.getTargetEndpoint: output -", output);
               }
             });
           }
-          // Then check the HTML
-          if (!output) {
-            let contentType = response.headers.get("content-type");
+        }
+
+        // Then check the HTML
+        if (!output) {
+          const response = await fetch(target, {
+            method: "GET"
+          });
+          if (response.ok) {
+            // Before anything, check to see if the URL has been redirected
+            if (response.redirected) { targetRedirect = response.url; }
+            const contentType = response.headers.get("content-type");
             if (this.#contentHTML.test(contentType) || this.#contentXHTML.test(contentType)) {
               console.debug("WebmentionValidator.getTargetEndpoint: Is (X)HTML; checking for @rel=webmention.");
-              let targetFile = await response.text();
-              let endpointURL = this.#getEndpointInTargetHTML(targetFile);
+              const targetFile = await response.text();
+              const endpointURL = this.#getEndpointInTargetHTML(targetFile);
               if (endpointURL || (endpointURL === "")) {
                 console.debug("WebmentionValidator.getTargetEndpoint: @webmention found in HTML element with @rel=webmention.");
                 output = endpointURL;
