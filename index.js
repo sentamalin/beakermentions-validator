@@ -14,7 +14,6 @@ export class WebmentionValidator {
   #domParser;
   #htmlRegex = new RegExp(/\.html?$/i);
   #relRegex = new RegExp(/rel=.*webmention.*/i);
-  #endpointRegex = new RegExp(/<.*>/);
   #contentHTML = new RegExp(/text\/html/i);
   #contentXHTML = new RegExp(/application\/xhtml\+xml/i);
 
@@ -197,12 +196,17 @@ export class WebmentionValidator {
             const linkHeaders = linkHeadersString.split(", ");
             linkHeaders.forEach(element => {
               if (!output) {
-                if (this.#relRegex.test(element)) {
-                  const url = element.match(this.#endpointRegex);
-                  console.debug("WebmentionValidator.getTargetEndpoint: 'webmention' found in HTTP Link Headers.");
-                  output = url.slice(1, url.length - 1);
-                  console.debug("WebmentionValidator.getTargetEndpoint: output -", output);
-                }
+                const url = element.substring(element.lastIndexOf("<") + 1, element.lastIndexOf(">"));
+                const linkParams = element.split(";");
+                linkParams.forEach(param => {
+                  if (!output) {
+                    if (this.#relRegex.test(param)) {
+                      console.debug("WebmentionValidator.getTargetEndpoint: 'rel=webmention' found in HTTP Link Headers.");
+                      output = url;
+                      console.debug("WebmentionValidator.getTargetEndpoint: output - ", output);
+                    }
+                  }
+                });
               }
             });
           }
