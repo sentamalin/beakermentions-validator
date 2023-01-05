@@ -9,6 +9,10 @@ This module provides a `WebmentionValidator` object that can be used by other ap
 
 A [test page][5] is available. For more information on Beakermentions, visit [Beakermentions: Webmentions for Beaker Browser][11]
 
+## This Project Is Archived
+
+It was cool at the time to be able to essentially send and receive webmentions, but as I've started working more and more at my primary job post-pandemic, I've been coding less and less on this. As Beaker Browser is archived as of 27 December 2022, consequently I'm archiving Beakermentions, Beakermentions Endpoint, and Beakermentions Validator.
+
 ## License
 
 Written in 2020 by [Don Geronimo][6]. To the extent possible under law, Don Geronimo has waived all copyright and related or neighboring rights to Beakermentions Validator by publishing it under the [CC0 1.0 Universal Public Domain Dedication][7]. This work is published from the United States.
